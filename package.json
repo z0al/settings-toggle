@@ -1,0 +1,53 @@
+{
+	"name": "power-settings",
+	"displayName": "Power Settings",
+	"description": "",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.55.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:power-settings.helloWorld"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "power-settings.helloWorld",
+				"title": "Hello World"
+			}
+		]
+	},
+	"scripts": {
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js",
+		"pretest": "yarn run compile && yarn run lint",
+		"format": "prettier -w '**/*.{ts,js,json,md}'",
+		"vscode:prepublish": "yarn run compile"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.4",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.55.0",
+		"@typescript-eslint/eslint-plugin": "^4.14.1",
+		"@typescript-eslint/parser": "^4.14.1",
+		"eslint": "^7.19.0",
+		"glob": "^7.1.6",
+		"mocha": "^8.2.1",
+		"prettier": "^2.2.1",
+		"typescript": "^4.1.3",
+		"vscode-test": "^1.5.0"
+	},
+	"prettier": {
+		"useTabs": true,
+		"printWidth": 80,
+		"singleQuote": true,
+		"arrowParens": "always"
+	}
+}
