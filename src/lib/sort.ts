@@ -1,56 +1,59 @@
+// Packages
+import { isMatch } from 'micromatch';
+
 function getCategoryIndex(key: string) {
 	// Editor
 	if (key.startsWith('editor.') || key.startsWith('diffEditor.')) {
 		// Editor > Cursor
 		// ['editor.cursor*']
 		if (key.startsWith('editor.cursor')) {
-			return 2;
+			return 1;
 		}
 
 		// Editor > Find
 		// ['editor.find.*']
 		if (key.startsWith('editor.find.')) {
-			return 3;
+			return 2;
 		}
 
 		// Editor > Font
 		// ['editor.font*']
 		if (key.startsWith('editor.font')) {
-			return 4;
+			return 3;
 		}
 
 		// Editor > Format
 		// ['editor.format*']
 		if (key.startsWith('editor.format')) {
-			return 5;
+			return 4;
 		}
 
 		// Editor > Diff Editor
 		// ['diffEditor.*']
 		if (key.startsWith('diffEditor.')) {
-			return 6;
+			return 5;
 		}
 
 		// Editor > Minimap
 		// ['editor.minimap.*']
 		if (key.startsWith('editor.minimap.')) {
-			return 7;
+			return 6;
 		}
 
 		// Editor > Suggestions
 		// ['editor.*suggest*']
-		if (key.startsWith('editor.') && key.includes('suggest')) {
-			return 8;
+		if (isMatch(key, 'editor.*suggest*')) {
+			return 7;
 		}
 
 		// Editor > Files
 		// ['files.*']
 		if (key.startsWith('files.')) {
-			return 9;
+			return 8;
 		}
 
 		// Other e.g. editor.accessibilitySupport
-		return 1;
+		return 9;
 	}
 
 	// Workbench
@@ -60,70 +63,60 @@ function getCategoryIndex(key: string) {
 		key.startsWith('screencastMode.')
 	) {
 		// Workbench > Appearance
-		//  [
-		// 		'workbench.activityBar.*',
-		// 		'workbench.*color*',
-		// 		'workbench.fontAliasing',
-		// 		'workbench.iconTheme',
-		// 		'workbench.sidebar.location',
-		// 		'workbench.*.visible',
-		// 		'workbench.tips.enabled',
-		// 		'workbench.tree.*',
-		// 		'workbench.view.*',
-		// 	]
 		if (
-			[
-				'workbench.activityBar.',
+			isMatch(key, [
+				'workbench.activityBar.*',
+				'workbench.*color*',
 				'workbench.fontAliasing',
 				'workbench.iconTheme',
 				'workbench.sidebar.location',
+				'workbench.*.visible',
 				'workbench.tips.enabled',
-				'workbench.tree.',
-				'workbench.view.',
-			].some((pre) => key.startsWith(pre)) ||
-			['.visible', 'color'].some((w) => key.includes(w))
+				'workbench.tree.*',
+				'workbench.view.*',
+			])
 		) {
-			return 11;
+			return 10;
 		}
 
 		// Workbench > Breadcrumbs
 		// ['breadcrumbs.*']
 		if (key.startsWith('breadcrumbs.')) {
-			return 12;
+			return 11;
 		}
 
 		// Workbench > Editor Management
 		// ['workbench.editor.*']
 		if (key.startsWith('workbench.editor.')) {
-			return 13;
+			return 12;
 		}
 
 		// Workbench > Settings Editor
 		// ['workbench.settings.*']
 		if (key.startsWith('workbench.settings.')) {
-			return 14;
+			return 13;
 		}
 
 		// Workbench > Zen Mode
 		// ['zenmode.*']
 		if (key.startsWith('zenmode.')) {
-			return 15;
+			return 14;
 		}
 
 		// Workbench > Screencast Mode
 		// ['screencastMode.*']
 		if (key.startsWith('screencastMode.')) {
-			return 16;
+			return 15;
 		}
 
 		// Other e.g. workbench.startupEditor
-		return 10;
+		return 16;
 	}
 
 	// Window
 
 	// ['window.*newwindow*']
-	if (key.startsWith('window.') && key.includes('newwindow')) {
+	if (isMatch(key, 'window.*newwindow*')) {
 		return 17;
 	}
 
@@ -131,7 +124,7 @@ function getCategoryIndex(key: string) {
 
 	// Features > Explorer
 	// ['explorer.*', 'outline.*']
-	if (key.startsWith('explorer.') || key.startsWith('outline.')) {
+	if (isMatch(key, ['explorer.*', 'outline.*'])) {
 		return 18;
 	}
 
@@ -143,7 +136,7 @@ function getCategoryIndex(key: string) {
 
 	// Features > Debug
 	// ['debug.*', 'launch']
-	if (key.startsWith('debug.') || key.startsWith('launch')) {
+	if (isMatch(key, ['debug.*', 'launch'])) {
 		return 20;
 	}
 

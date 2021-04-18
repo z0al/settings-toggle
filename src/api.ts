@@ -7,6 +7,7 @@ import { isDefined } from './lib/is';
 import { flatten } from './lib/flatten';
 import { getLabel } from './lib/getLabel';
 import { groupByCategory } from './lib/sort';
+import { getCurrentValue } from './lib/getCurrentValue';
 
 export const Commands = {
 	execute: (cmd: string) => {
@@ -42,7 +43,7 @@ export const Window = {
 			placeHolder,
 			matchOnDetail: true,
 			matchOnDescription: false,
-			ignoreFocusOut: true,
+			// ignoreFocusOut: true,
 		}),
 };
 
@@ -163,23 +164,15 @@ export class Settings {
 			const values = config.inspect(key);
 
 			const hasGlobalValue = isDefined(values?.globalValue);
-			const hasDefaultValue = isDefined(values?.defaultValue);
 			const hasWorkspaceValue = isDefined(values?.workspaceValue);
-
-			const currentValue = JSON.stringify(
-				this.opts.workspace && hasWorkspaceValue
-					? values?.workspaceValue
-					: hasGlobalValue
-					? values?.globalValue
-					: // Fallback to worksapceValue when the default value is
-					// undefined. Useful work things like `tasks`.
-					hasDefaultValue
-					? values?.defaultValue
-					: values?.workspaceValue
-			);
 
 			const isModifiedInWorkspace =
 				!this.opts.workspace && hasWorkspaceValue;
+
+			const currentValue = getCurrentValue({
+				target: this.opts.workspace ? 'workspace' : 'global',
+				...values,
+			});
 
 			return {
 				key,
