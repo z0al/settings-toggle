@@ -51,13 +51,13 @@
 		"capital-case": "^1.0.4",
 		"flat": "^5.0.2",
 		"jsonc-parser": "^3.0.0",
-		"lodash": "^4.17.21"
+		"micromatch": "^4.0.4"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.16",
 		"@types/flat": "^5.0.1",
 		"@types/glob": "^7.1.3",
-		"@types/lodash": "^4.14.168",
+		"@types/micromatch": "^4.0.1",
 		"@types/mocha": "^8.0.4",
 		"@types/node": "^14.14.41",
 		"@types/vscode": "^1.55.0",
