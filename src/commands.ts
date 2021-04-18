@@ -1,10 +1,12 @@
 // Ours
-import { Settings, Command } from './api';
+import { Command } from './types';
+import { Settings, Window } from './api';
 import { Toggle, ToggleWorkspace } from './constants';
 
 const buildCommand = (mode: 'global' | 'workspace') => {
+	const isWorkspace = mode === 'workspace';
 	const opts = {
-		workspace: mode === 'workspace',
+		workspace: isWorkspace,
 	};
 
 	return async () => {
@@ -12,14 +14,16 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 
 		// await settings.open();
 
-		// const editor = Window.activeEditor();
+		const value = await Window.showQuickPick(
+			`Select to toggle or open a configuration ${
+				isWorkspace ? '(Workspace)' : ''
+			}`,
+			settings.getItems()
+		);
 
-		// if (!editor) {
-		// 	return;
-		// }
-
-		// const json = new ConfigEditor(editor);
-		// json.jumpTo(73);
+		console.log(value);
+		// TODO: get completion values
+		// TODO: open file when necessary
 	};
 };
 

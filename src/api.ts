@@ -1,9 +1,12 @@
+// Packages
 import * as vscode from 'vscode';
 
-export interface Command {
-	name: string;
-	callback: () => Promise<void>;
-}
+// Ours
+import { Command } from './types';
+import { isDefined } from './lib/is';
+import { flatten } from './lib/flatten';
+import { getLabel } from './lib/getLabel';
+import { groupByCategory } from './lib/sort';
 
 export const Commands = {
 	execute: (cmd: string) => {
@@ -38,7 +41,8 @@ export const Window = {
 		await vscode.window.showQuickPick(items, {
 			placeHolder,
 			matchOnDetail: true,
-			matchOnDescription: true,
+			matchOnDescription: false,
+			ignoreFocusOut: true,
 		}),
 };
 
@@ -84,7 +88,7 @@ export class Settings {
 	 * Check if JSON settings file is opened in the currentlly active
 	 * editor
 	 */
-	isActive = () => {
+	private isActive = () => {
 		// FIXIME: compatiblity with other editors
 		const fileExt = this.opts.workspace
 			? '.vscode/settings.json'
@@ -102,7 +106,7 @@ export class Settings {
 		);
 	};
 
-	waitUntilActive = () => {
+	private waitUntilActive = () => {
 		if (this.isActive()) {
 			return true;
 		}
@@ -141,5 +145,59 @@ export class Settings {
 		await this.waitUntilActive();
 
 		return true;
+	};
+
+	getItems = () => {
+		const config = vscode.workspace.getConfiguration();
+
+		const keys = Object.keys(flatten(config)).filter((k) => {
+			// Omit language keys & false positives
+			return !/\[|\*/.test(k);
+		});
+
+		// TODO: write a custom flatten function that doesn't go deeper
+		// in keys that ends with /exclude/i or starts with "["
+		// It should also accept a mapper function to avoid another iteration
+
+		return keys.sort(groupByCategory).map((key) => {
+			const values = config.inspect(key);
+
+			const hasGlobalValue = isDefined(values?.globalValue);
+			const hasDefaultValue = isDefined(values?.defaultValue);
+			const hasWorkspaceValue = isDefined(values?.workspaceValue);
+
+			const currentValue = JSON.stringify(
+				this.opts.workspace && hasWorkspaceValue
+					? values?.workspaceValue
+					: hasGlobalValue
+					? values?.globalValue
+					: // Fallback to worksapceValue when the default value is
+					// undefined. Useful work things like `tasks`.
+					hasDefaultValue
+					? values?.defaultValue
+					: values?.workspaceValue
+			);
+
+			const isModifiedInWorkspace =
+				!this.opts.workspace && hasWorkspaceValue;
+
+			return {
+				key,
+				currentValue,
+				globalValue: values?.globalValue,
+				defaultValue: values?.defaultValue,
+				workspaceValue: values?.workspaceValue,
+
+				label: getLabel(key),
+				detail: currentValue,
+				// In global settings mode we want to indicate if a value
+				// is overwritten in workspace level
+				description: isModifiedInWorkspace
+					? hasGlobalValue
+						? '(Also modified in: Workspace)'
+						: '(Modified in: Workspace)'
+					: '',
+			};
+		});
 	};
 }

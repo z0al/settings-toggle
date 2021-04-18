@@ -1,13 +1,20 @@
 {
 	"name": "power-settings",
 	"displayName": "Power Settings",
-	"description": "",
-	"version": "0.0.1",
+	"description": "Toggle Settings like a Pro",
+	"publisher": "z0al",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.55.0"
 	},
 	"categories": [
 		"Other"
+	],
+	"keywords": [
+		"settings",
+		"power",
+		"toggle",
+		"json"
 	],
 	"activationEvents": [
 		"onLanguage:jsonc",
@@ -31,27 +38,37 @@
 	},
 	"scripts": {
 		"compile": "tsc -p ./",
+		"precompile": "rimraf -rf ./dist",
 		"watch": "tsc -watch -p ./",
 		"lint": "eslint src --ext ts",
-		"test": "node ./dist/test/runTest.js",
-		"pretest": "yarn run compile && yarn run lint",
-		"format": "prettier -w '**/*.{ts,js,json,md}'",
+		"test": "yarn test:unit && yarn test:e2e",
+		"test:unit": "yarn run compile && mocha dist/**/*.test.js --ignore '**/e2e/*.test.js'",
+		"test:e2e": "yarn run compile && node ./dist/test/runTest.js",
+		"format": "prettier -w '**/*.{ts,json,md}'",
 		"vscode:prepublish": "yarn run compile"
 	},
 	"dependencies": {
-		"jsonc-parser": "^3.0.0"
+		"capital-case": "^1.0.4",
+		"flat": "^5.0.2",
+		"jsonc-parser": "^3.0.0",
+		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
+		"@types/chai": "^4.2.16",
+		"@types/flat": "^5.0.1",
 		"@types/glob": "^7.1.3",
+		"@types/lodash": "^4.14.168",
 		"@types/mocha": "^8.0.4",
 		"@types/node": "^14.14.41",
 		"@types/vscode": "^1.55.0",
 		"@typescript-eslint/eslint-plugin": "^4.14.1",
 		"@typescript-eslint/parser": "^4.14.1",
+		"chai": "^4.3.4",
 		"eslint": "^7.19.0",
 		"glob": "^7.1.6",
 		"mocha": "^8.2.1",
 		"prettier": "^2.2.1",
+		"rimraf": "^3.0.2",
 		"typescript": "^4.1.3",
 		"vscode-test": "^1.5.0"
 	},
@@ -59,6 +76,7 @@
 		"useTabs": true,
 		"printWidth": 72,
 		"singleQuote": true,
-		"arrowParens": "always"
+		"arrowParens": "always",
+		"quoteProps": "consistent"
 	}
 }
