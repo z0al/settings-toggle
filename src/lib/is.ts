@@ -5,3 +5,11 @@ export function isAlphanumeric(str: string) {
 export function isDefined(v: unknown) {
 	return v !== undefined;
 }
+
+export function isObject(v: any) {
+	return v && typeof v === 'object' && !Array.isArray(v);
+}
+
+export function isEmptyObject(v: any) {
+	return isObject(v) && Object.keys(v).length === 0;
+}

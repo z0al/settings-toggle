@@ -2,11 +2,10 @@
 import * as vscode from 'vscode';
 
 // Ours
-import { Command } from './types';
 import { isDefined } from './lib/is';
 import { flatten } from './lib/flatten';
 import { getLabel } from './lib/getLabel';
-import { groupByCategory } from './lib/sort';
+import { Command, Configuration } from './types';
 import { getCurrentValue } from './lib/getCurrentValue';
 
 export const Commands = {
@@ -148,26 +147,20 @@ export class Settings {
 		return true;
 	};
 
-	getItems = () => {
+	getItems = (): Configuration[] => {
 		const config = vscode.workspace.getConfiguration();
 
-		const keys = Object.keys(flatten(config)).filter((k) => {
-			// Omit language keys & false positives
-			return !/\[|\*/.test(k);
-		});
+		const transformKey = (key: string): Configuration => {
+			const inspected = config.inspect(key);
 
-		// TODO: write a custom flatten function that doesn't go deeper
-		// in keys that ends with /exclude/i or starts with "["
-		// It should also accept a mapper function to avoid another iteration
-
-		return keys.sort(groupByCategory).map((key) => {
-			const values = config.inspect(key);
-
-			const hasGlobalValue = isDefined(values?.globalValue);
-			const hasWorkspaceValue = isDefined(values?.workspaceValue);
+			const values = {
+				globalValue: inspected?.globalValue,
+				defaultValue: inspected?.defaultValue,
+				workspaceValue: inspected?.workspaceValue,
+			};
 
 			const isModifiedInWorkspace =
-				!this.opts.workspace && hasWorkspaceValue;
+				!this.opts.workspace && isDefined(values.workspaceValue);
 
 			const currentValue = getCurrentValue({
 				target: this.opts.workspace ? 'workspace' : 'global',
@@ -176,21 +169,36 @@ export class Settings {
 
 			return {
 				key,
+				...values,
 				currentValue,
-				globalValue: values?.globalValue,
-				defaultValue: values?.defaultValue,
-				workspaceValue: values?.workspaceValue,
 
 				label: getLabel(key),
 				detail: currentValue,
+
 				// In global settings mode we want to indicate if a value
 				// is overwritten in workspace level
 				description: isModifiedInWorkspace
-					? hasGlobalValue
+					? isDefined(values.globalValue)
 						? '(Also modified in: Workspace)'
 						: '(Modified in: Workspace)'
 					: '',
 			};
+		};
+
+		return flatten({
+			input: config,
+			transform: transformKey,
+
+			// Exclude language keys and functions
+			exclude: (key, value) => {
+				return key.startsWith('[') || typeof value === 'function';
+			},
+
+			// Avoid going deeper in "exclude" configuration objects
+			// e.g. files.exclude={'**/.git': true }
+			deeper: (key) => {
+				return !key.toLocaleLowerCase().endsWith('exclude');
+			},
 		});
 	};
 }

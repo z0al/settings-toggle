@@ -250,6 +250,6 @@ function getCategoryIndex(key: string) {
 	return 100;
 }
 
-export function groupByCategory(a: string, b: string) {
+export function byCategory(a: string, b: string) {
 	return getCategoryIndex(a) - getCategoryIndex(b);
 }
