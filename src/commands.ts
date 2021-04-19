@@ -1,5 +1,6 @@
 // Ours
 import { Command } from './types';
+import { byCategory } from './lib/sort';
 import { Settings, Window } from './api';
 import { Toggle, ToggleWorkspace } from './constants';
 
@@ -12,18 +13,17 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 	return async () => {
 		const settings = new Settings(opts);
 
-		// await settings.open();
-
 		const value = await Window.showQuickPick(
 			`Select to toggle or open a configuration ${
 				isWorkspace ? '(Workspace)' : ''
 			}`,
-			settings.getItems()
+			settings.getItems().sort((a, b) => byCategory(a.key, b.key))
 		);
 
 		console.log(value);
 		// TODO: get completion values
 		// TODO: open file when necessary
+		// await settings.open();
 	};
 };
 
