@@ -2,9 +2,7 @@
 import * as vscode from 'vscode';
 
 // Ours
-import { isDefined } from './lib/is';
 import { flatten } from './lib/flatten';
-import { getLabel } from './lib/getLabel';
 import { Command, Configuration } from './types';
 import { getCurrentValue } from './lib/getCurrentValue';
 
@@ -34,11 +32,14 @@ export const Window = {
 	/**
 	 * Show a selection list
 	 */
-	showQuickPick: async (
+	showQuickPick: async <T extends vscode.QuickPickItem>(
+		title: string,
 		placeHolder: string,
-		items: vscode.QuickPickItem[]
+		items: T[]
 	) =>
-		await vscode.window.showQuickPick(items, {
+		await vscode.window.showQuickPick<T>(items, {
+			// @ts-expect-error
+			title,
 			placeHolder,
 			matchOnDetail: true,
 			matchOnDescription: false,
@@ -147,10 +148,10 @@ export class Settings {
 		return true;
 	};
 
-	getItems = (): Configuration[] => {
+	getItems = <T>(transform: (config: Configuration) => T): T[] => {
 		const config = vscode.workspace.getConfiguration();
 
-		const transformKey = (key: string): Configuration => {
+		const transformKey = (key: string): T => {
 			const inspected = config.inspect(key);
 
 			const values = {
@@ -159,30 +160,16 @@ export class Settings {
 				workspaceValue: inspected?.workspaceValue,
 			};
 
-			const isModifiedInWorkspace =
-				!this.opts.workspace && isDefined(values.workspaceValue);
-
 			const currentValue = getCurrentValue({
 				target: this.opts.workspace ? 'workspace' : 'global',
 				...values,
 			});
 
-			return {
+			return transform({
 				key,
 				...values,
 				currentValue,
-
-				label: getLabel(key),
-				detail: currentValue,
-
-				// In global settings mode we want to indicate if a value
-				// is overwritten in workspace level
-				description: isModifiedInWorkspace
-					? isDefined(values.globalValue)
-						? '(Also modified in: Workspace)'
-						: '(Modified in: Workspace)'
-					: '',
-			};
+			});
 		};
 
 		return flatten({
