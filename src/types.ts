@@ -1,6 +1,3 @@
-// Packages
-import { QuickPickItem } from 'vscode';
-
 export type {
 	QuickPickItem,
 	TextEditor,
@@ -9,13 +6,13 @@ export type {
 
 export interface Command {
 	name: string;
-	callback: () => Promise<void>;
+	callback: () => Promise<unknown>;
 }
 
-export interface Configuration extends QuickPickItem {
+export interface Configuration {
 	key: string;
-	currentValue?: unknown;
-	defaultValue?: unknown;
-	globalValue?: unknown;
-	workspaceValue?: unknown;
+	currentValue?: any;
+	defaultValue?: any;
+	globalValue?: any;
+	workspaceValue?: any;
 }
