@@ -125,6 +125,21 @@ export class Settings {
 	};
 
 	/**
+	 * Change the value of a given configuration key
+	 */
+	set = (key: string, value: any) => {
+		const configs = vscode.workspace.getConfiguration();
+
+		return configs.update(
+			key,
+			value,
+			this.opts.workspace
+				? vscode.ConfigurationTarget.Workspace
+				: vscode.ConfigurationTarget.Global
+		);
+	};
+
+	/**
 	 * Open global or workspace JSON settings and wait for the file
 	 * to be active
 	 */
