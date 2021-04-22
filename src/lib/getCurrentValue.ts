@@ -22,5 +22,5 @@ export function getCurrentValue(opts: {
 			? opts.defaultValue
 			: opts.workspaceValue;
 
-	return JSON.stringify(currentValue);
+	return currentValue;
 }

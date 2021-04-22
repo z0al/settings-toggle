@@ -9,7 +9,14 @@ export interface Command {
 	callback: () => Promise<unknown>;
 }
 
-export interface Configuration {
+export interface ConfigurationSchema {
+	// There is more but we don't care
+	type: 'string' | 'boolean';
+	enum?: any[];
+	enumDescriptions?: string[];
+}
+
+export interface Configuration extends ConfigurationSchema {
 	key: string;
 	currentValue?: any;
 	defaultValue?: any;
