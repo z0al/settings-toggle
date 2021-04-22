@@ -49,8 +49,7 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 		}
 
 		if (config.type === 'boolean') {
-			// TODO: toggle the value immediately
-			return;
+			return await settings.set(config.key, !config.currentValue);
 		}
 
 		if (config.type === 'string' && config.enum) {
@@ -63,8 +62,7 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 			const isWorkspaceValue = (value: unknown) =>
 				config.workspaceValue === value;
 
-			// TODO: Should actually save the user input
-			await Window.showQuickPick(
+			const targetValue: any = await Window.showQuickPick(
 				title,
 				config.label,
 				config.enum.map((label) => ({
@@ -78,6 +76,17 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 						: '',
 				}))
 			);
+
+			console.log(
+				'setting the value of ',
+				config,
+				'to',
+				targetValue?.label
+			);
+
+			if (targetValue) {
+				await settings.set(config.key, targetValue.label);
+			}
 
 			return;
 		}
