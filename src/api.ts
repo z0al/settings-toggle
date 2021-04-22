@@ -2,8 +2,8 @@
 import * as vscode from 'vscode';
 
 // Ours
-import { flatten } from './lib/flatten';
 import { Command, Configuration } from './types';
+import { configurationsSchema } from './lib/schema';
 import { getCurrentValue } from './lib/getCurrentValue';
 
 export const Commands = {
@@ -90,7 +90,7 @@ export class Settings {
 	 * editor
 	 */
 	private isActive = () => {
-		// FIXIME: compatiblity with other editors
+		// FIXIME: compatiblity with other editors?
 		const fileExt = this.opts.workspace
 			? '.vscode/settings.json'
 			: '/User/settings.json';
@@ -151,7 +151,9 @@ export class Settings {
 	getItems = <T>(transform: (config: Configuration) => T): T[] => {
 		const config = vscode.workspace.getConfiguration();
 
-		const transformKey = (key: string): T => {
+		const items: T[] = [];
+
+		configurationsSchema.forEach((schema, key) => {
 			const inspected = config.inspect(key);
 
 			const values = {
@@ -165,27 +167,11 @@ export class Settings {
 				...values,
 			});
 
-			return transform({
-				key,
-				...values,
-				currentValue,
-			});
-		};
-
-		return flatten({
-			input: config,
-			transform: transformKey,
-
-			// Exclude language keys and functions
-			exclude: (key, value) => {
-				return key.startsWith('[') || typeof value === 'function';
-			},
-
-			// Avoid going deeper in "exclude" configuration objects
-			// e.g. files.exclude={'**/.git': true }
-			deeper: (key) => {
-				return !key.toLocaleLowerCase().endsWith('exclude');
-			},
+			items.push(
+				transform({ key, ...schema, ...values, currentValue })
+			);
 		});
+
+		return items;
 	};
 }

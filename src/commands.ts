@@ -6,26 +6,6 @@ import { getLabel } from './lib/getLabel';
 import { Toggle, ToggleWorkspace } from './constants';
 import { Command, Configuration, QuickPickItem } from './types';
 
-const typeOf = (c: Configuration, t: 'boolean' | 'string') => {
-	return (
-		typeof c.defaultValue === t ||
-		typeof c.globalValue === t ||
-		typeof c.workspaceValue === t
-	);
-};
-
-const getCompletions = (
-	c: Configuration
-): QuickPickItem[] | undefined => {
-	if (typeOf(c, 'boolean')) {
-		return [true, false].map((v) => ({
-			label: JSON.stringify(v),
-		}));
-	}
-
-	return undefined;
-};
-
 const buildCommand = (mode: 'global' | 'workspace') => {
 	const isWorkspace = mode === 'workspace';
 	const options = { workspace: isWorkspace };
@@ -39,7 +19,7 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 		return {
 			...config,
 			label: getLabel(config.key),
-			detail: config.currentValue,
+			detail: JSON.stringify(config.currentValue),
 
 			// In global settings mode we want to indicate if a
 			// value is overwritten in workspace level
@@ -68,15 +48,42 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 			return;
 		}
 
-		const completions = getCompletions(config);
-
-		if (!completions) {
-			// TODO: .open() should accept a config to jump to
-			return await settings.open();
+		if (config.type === 'boolean') {
+			// TODO: toggle the value immediately
+			return;
 		}
 
-		// TODO: Should actually save the user input
-		await Window.showQuickPick(title, config.label, completions);
+		if (config.type === 'string' && config.enum) {
+			const isDefaultValue = (value: unknown) =>
+				config.defaultValue === value;
+
+			const isCurrentValue = (value: unknown) =>
+				config.currentValue === value;
+
+			const isWorkspaceValue = (value: unknown) =>
+				config.workspaceValue === value;
+
+			// TODO: Should actually save the user input
+			await Window.showQuickPick(
+				title,
+				config.label,
+				config.enum.map((label) => ({
+					label,
+					description: isDefaultValue(label)
+						? '(Default)'
+						: isCurrentValue(label)
+						? '(Current)'
+						: !isWorkspace && isWorkspaceValue(label)
+						? '(Workspace)'
+						: '',
+				}))
+			);
+
+			return;
+		}
+
+		// TODO: .open() should accept a config to jump to
+		return await settings.open();
 	};
 };
 
