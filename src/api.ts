@@ -38,7 +38,6 @@ export const Window = {
 		items: T[]
 	) =>
 		await vscode.window.showQuickPick<T>(items, {
-			// @ts-expect-error
 			title,
 			placeHolder,
 			matchOnDetail: true,
@@ -56,7 +55,7 @@ export class JsonEditor {
 	};
 
 	/**
-	 * Jumpt to line number
+	 * Jump to line number
 	 *
 	 * Copied & modified from:
 	 * https://github.com/mathbookpeace/vscode-ext-just-go-to-line
@@ -86,11 +85,11 @@ export class Settings {
 	constructor(private opts: { workspace?: boolean } = {}) {}
 
 	/**
-	 * Check if JSON settings file is opened in the currentlly active
+	 * Check if JSON settings file is opened in the currently active
 	 * editor
 	 */
 	private isActive = () => {
-		// FIXIME: compatiblity with other editors?
+		// FIXIME: compatibility with other editors?
 		const fileExt = this.opts.workspace
 			? '.vscode/settings.json'
 			: '/User/settings.json';
