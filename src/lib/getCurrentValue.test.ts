@@ -13,12 +13,12 @@ describe('getCurrentValue', () => {
 		};
 
 		expect(getCurrentValue({ target: 'global', ...values })).to.equal(
-			'"globalValue"'
+			'globalValue'
 		);
 
 		expect(
 			getCurrentValue({ target: 'workspace', ...values })
-		).to.equal('"workspaceValue"');
+		).to.equal('workspaceValue');
 	});
 
 	it('falls back to default value when necessary', () => {
@@ -27,12 +27,12 @@ describe('getCurrentValue', () => {
 		};
 
 		expect(getCurrentValue({ target: 'global', ...values })).to.equal(
-			'"defaultValue"'
+			'defaultValue'
 		);
 
 		expect(
 			getCurrentValue({ target: 'workspace', ...values })
-		).to.equal('"defaultValue"');
+		).to.equal('defaultValue');
 	});
 
 	it('falls back to workspace value when the default is undefined', () => {
@@ -41,11 +41,11 @@ describe('getCurrentValue', () => {
 		};
 
 		expect(getCurrentValue({ target: 'global', ...values })).to.equal(
-			'"workspaceValue"'
+			'workspaceValue'
 		);
 
 		expect(
 			getCurrentValue({ target: 'workspace', ...values })
-		).to.equal('"workspaceValue"');
+		).to.equal('workspaceValue');
 	});
 });

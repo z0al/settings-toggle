@@ -77,13 +77,6 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 				}))
 			);
 
-			console.log(
-				'setting the value of ',
-				config,
-				'to',
-				targetValue?.label
-			);
-
 			if (targetValue) {
 				await settings.set(config.key, targetValue.label);
 			}
