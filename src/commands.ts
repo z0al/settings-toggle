@@ -3,12 +3,16 @@ import { isDefined } from './lib/is';
 import { Settings, Window } from './api';
 import { ExtensionId } from './constants';
 import { getLabel } from './lib/getLabel';
-import { byCategory, byHierarchy } from './lib/sort';
+import { categorize } from './lib/categorize';
 import { Command, Configuration, QuickPickItem } from './types';
+
+const stripDoubleQuotes = (str?: string) => {
+	return str?.replace(/^"|"$/g, '');
+};
 
 const buildCommand = (mode: 'global' | 'workspace') => {
 	const isWorkspace = mode === 'workspace';
-	const title = 'Settings' + (isWorkspace ? ' (Workspace)' : '');
+	const title = 'Toggle' + (isWorkspace ? ' (Workspace)' : '');
 
 	const createConfigurationItem = (config: Configuration) => {
 		const hasValue = isDefined(
@@ -22,7 +26,7 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 		return {
 			...config,
 			label: getLabel(config.key),
-			detail: JSON.stringify(config.currentValue),
+			detail: stripDoubleQuotes(JSON.stringify(config.currentValue)),
 			description: isModified
 				? hasValue
 					? `(Also modified in: ${modifier})`
@@ -39,10 +43,7 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 			await Window.showQuickPick(
 				title,
 				'Search settings',
-				settings
-					.getItems(createConfigurationItem)
-					.sort(byHierarchy)
-					.sort(byCategory)
+				categorize(settings.getItems(createConfigurationItem))
 			);
 
 		if (!config) {
