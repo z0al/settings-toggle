@@ -56,6 +56,7 @@
 		"tsc": "rimraf -rf ./dist && tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"test": "jest",
+		"watch": "tsc -watch -p ./",
 		"format": "prettier -w '**/*.{ts,json,md}'",
 		"vscode:prepublish": "npm run build"
 	},
