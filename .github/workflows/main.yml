@@ -4,10 +4,16 @@ on: [push, pull_request]
 
 jobs:
   test:
-    name: Test
-    runs-on: ubuntu-latest
+		strategy:
+		matrix:
+			os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - run: yarn install
-      - run: yarn test
-      - run: yarn lint
+      - run: npm install
+      - run: npm lint
+			- run: xvfb-run -a npm test
+				if: runner.os == 'Linux'
+			- run: npm test
+				if: runner.os != 'Linux'
+
