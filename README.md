@@ -6,7 +6,7 @@ Effortlessly Toggle Settings in Visual Studio Code
 
 - 🔍 Quickly Toggle or open any configuration
 - 👀 Preview configuration changes on focus
-- 🚩 Highlight modification in user/workspace configurations
+- 💡 Indicate modification in user/workspace configurations
 
 ## Note
 
@@ -19,7 +19,7 @@ Only `boolean` and `enum` configurations can be toggled. Otherwise, the extensio
 
 ## Keyboard Shortcuts
 
-The extension defines the following keyboard shortcuts for `Toggle: User Settings` command:
+The extension defines the following keyboard shortcuts for the `Toggle: User Settings` command:
 
 - `Cmd+Shift+,` on MacOS
 - `Ctrl+Shift+,` on Windows/Linux
@@ -28,7 +28,7 @@ The extension defines the following keyboard shortcuts for `Toggle: User Setting
 
 The logic for parsing VS Code configurations was borrowed from a similar extension called [settings-picker][settings-picker]. Kudos to the author.
 
-The Icon was made by [Vitaly Gorbachev][icon-author] from [www.flaticon.com][flaticon]
+The icon was made by [Vitaly Gorbachev][icon-author] from [www.flaticon.com][flaticon]
 
 ## License
 
