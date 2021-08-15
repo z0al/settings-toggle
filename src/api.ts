@@ -33,18 +33,43 @@ export const Window = {
 	/**
 	 * Show a selection list
 	 */
-	showQuickPick: async <T extends vscode.QuickPickItem>(
+	showQuickPick: async <
+		T extends vscode.QuickPickItem & { isActive?: boolean }
+	>(
 		title: string,
 		placeHolder: string,
-		items: T[]
-	) =>
-		await vscode.window.showQuickPick<T>(items, {
-			title,
-			placeHolder,
-			matchOnDetail: true,
-			matchOnDescription: false,
-			// ignoreFocusOut: true,
-		}),
+		items: T[],
+		onFocus?: (item: T) => void
+	) => {
+		const qp = vscode.window.createQuickPick<T>();
+
+		qp.items = items;
+		qp.title = title;
+		qp.placeholder = placeHolder;
+		qp.matchOnDetail = true;
+		qp.matchOnDescription = false;
+		qp.activeItems = items.filter((item) => item.isActive);
+
+		qp.onDidChangeActive((items) => {
+			// We don't support canPickMany
+			const item = items[0];
+			onFocus?.(item);
+		});
+
+		return new Promise<T | undefined>((resolve) => {
+			qp.onDidAccept(() => {
+				qp.hide();
+
+				// We don't support canPickMany
+				const item = qp.selectedItems[0];
+				resolve(item);
+			});
+
+			qp.onDidHide(() => resolve(undefined));
+
+			qp.show();
+		});
+	},
 };
 
 export class Settings {

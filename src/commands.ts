@@ -63,7 +63,6 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 		}
 
 		// Enums
-
 		const isDefaultValue = (value: unknown) =>
 			config.defaultValue === value;
 
@@ -73,12 +72,14 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 		const isWorkspaceValue = (value: unknown) =>
 			config.workspaceValue === value;
 
-		const targetValue: any = await Window.showQuickPick(
+		const targetValue = await Window.showQuickPick(
 			title,
 			config.label,
 			config.enum.map((label) => ({
 				label,
 				value: label,
+				// Preselect the current value
+				isActive: label === config.currentValue,
 				description: isDefaultValue(label)
 					? '(Default)'
 					: isCurrentValue(label)
@@ -86,14 +87,18 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 					: !isWorkspace && isWorkspaceValue(label)
 					? '(Workspace)'
 					: '',
-			}))
+			})),
+			// Temporarily apply value on focus
+			(item) => {
+				settings.set(config.key, item.value);
+			}
 		);
 
-		if (!targetValue) {
-			return;
-		}
-
-		return settings.set(config.key, targetValue.value);
+		// Revert setting to the original or set a value
+		return settings.set(
+			config.key,
+			targetValue?.value || config.currentValue
+		);
 	};
 };
 
