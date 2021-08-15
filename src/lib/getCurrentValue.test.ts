@@ -1,6 +1,3 @@
-// Packages
-import { expect } from 'chai';
-
 // Ours
 import { getCurrentValue } from './getCurrentValue';
 
@@ -12,13 +9,13 @@ describe('getCurrentValue', () => {
 			workspaceValue: 'workspaceValue',
 		};
 
-		expect(getCurrentValue({ target: 'global', ...values })).to.equal(
+		expect(getCurrentValue({ target: 'global', ...values })).toEqual(
 			'globalValue'
 		);
 
-		expect(
-			getCurrentValue({ target: 'workspace', ...values })
-		).to.equal('workspaceValue');
+		expect(getCurrentValue({ target: 'workspace', ...values })).toEqual(
+			'workspaceValue'
+		);
 	});
 
 	it('falls back to default value when necessary', () => {
@@ -26,13 +23,13 @@ describe('getCurrentValue', () => {
 			defaultValue: 'defaultValue',
 		};
 
-		expect(getCurrentValue({ target: 'global', ...values })).to.equal(
+		expect(getCurrentValue({ target: 'global', ...values })).toEqual(
 			'defaultValue'
 		);
 
-		expect(
-			getCurrentValue({ target: 'workspace', ...values })
-		).to.equal('defaultValue');
+		expect(getCurrentValue({ target: 'workspace', ...values })).toEqual(
+			'defaultValue'
+		);
 	});
 
 	it('falls back to workspace value when the default is undefined', () => {
@@ -40,12 +37,12 @@ describe('getCurrentValue', () => {
 			workspaceValue: 'workspaceValue',
 		};
 
-		expect(getCurrentValue({ target: 'global', ...values })).to.equal(
+		expect(getCurrentValue({ target: 'global', ...values })).toEqual(
 			'workspaceValue'
 		);
 
-		expect(
-			getCurrentValue({ target: 'workspace', ...values })
-		).to.equal('workspaceValue');
+		expect(getCurrentValue({ target: 'workspace', ...values })).toEqual(
+			'workspaceValue'
+		);
 	});
 });

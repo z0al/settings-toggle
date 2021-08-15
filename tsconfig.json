@@ -9,7 +9,8 @@
 		"strict": true,
 		"noUnusedParameters": true,
 		"noUnusedLocals": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"resolveJsonModule": true
 	},
 	"exclude": ["node_modules", ".vscode-test"]
 }

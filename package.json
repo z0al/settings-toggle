@@ -1,51 +1,52 @@
 {
-	"name": "power-settings",
-	"displayName": "Power Settings",
-	"description": "Toggle Settings like a Pro",
+	"name": "settings-toggle",
+	"displayName": "Settings Toggle",
+	"description": "Effortlessly Toggle Settings in Visual Studio Code",
 	"publisher": "z0al",
 	"version": "0.1.0",
 	"engines": {
-		"vscode": "^1.55.0"
+		"vscode": "^1.59.0"
 	},
 	"categories": [
 		"Other"
 	],
 	"keywords": [
 		"settings",
-		"power",
-		"toggle",
-		"json"
+		"toggle"
 	],
 	"activationEvents": [
-		"onLanguage:jsonc",
-		"onCommand:power-settings.toggle",
-		"onCommand:power-settings.toggle-workspace"
+		"onCommand:settings-toggle.toggle",
+		"onCommand:settings-toggle.toggle-workspace"
 	],
 	"main": "./dist/main.js",
 	"contributes": {
+		"keybindings": [
+			{
+				"command": "settings-toggle.toggle",
+				"key": "ctrl+shift+,",
+				"mac": "cmd+shift+,"
+			}
+		],
 		"commands": [
 			{
-				"title": "Toggle",
-				"category": "Power Settings",
-				"command": "power-settings.toggle"
+				"title": "User Settings",
+				"category": "Toggle",
+				"command": "settings-toggle.toggle"
 			},
 			{
-				"title": "Toggle (Workspace)",
-				"category": "Power Settings",
-				"command": "power-settings.toggle-workspace"
+				"title": "Workspace Settings",
+				"category": "Toggle",
+				"command": "settings-toggle.toggle-workspace"
 			}
 		]
 	},
 	"scripts": {
-		"compile": "tsc -p ./",
-		"precompile": "rimraf -rf ./dist",
+		"compile": "rimraf -rf ./dist && tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"lint": "eslint src --ext ts",
-		"test": "yarn test:unit && yarn test:e2e",
-		"test:unit": "yarn run compile && mocha dist/**/*.test.js --ignore '**/e2e/*.test.js'",
-		"test:e2e": "yarn run compile && node ./dist/test/runTest.js",
+		"test": "jest",
 		"format": "prettier -w '**/*.{ts,json,md}'",
-		"vscode:prepublish": "yarn run compile"
+		"vscode:prepublish": "npm run compile"
 	},
 	"dependencies": {
 		"capital-case": "^1.0.4",
@@ -53,21 +54,19 @@
 		"p-wait-for": "^3.2.0"
 	},
 	"devDependencies": {
-		"@types/chai": "^4.2.21",
 		"@types/glob": "^7.1.4",
+		"@types/jest": "^27.0.1",
 		"@types/micromatch": "^4.0.2",
-		"@types/mocha": "^9.0.0",
 		"@types/node": "^16.6.1",
 		"@types/vscode": "^1.59.0",
 		"@typescript-eslint/eslint-plugin": "^4.29.1",
 		"@typescript-eslint/parser": "^4.29.1",
-		"@vscode/test-electron": "^1.6.2",
-		"chai": "^4.3.4",
 		"eslint": "^7.32.0",
 		"glob": "^7.1.7",
-		"mocha": "^9.0.3",
+		"jest": "^27.0.6",
 		"prettier": "^2.3.2",
 		"rimraf": "^3.0.2",
+		"ts-jest": "^27.0.4",
 		"typescript": "^4.3.5"
 	},
 	"prettier": {

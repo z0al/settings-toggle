@@ -1,9 +1,9 @@
 // Ours
 import { isDefined } from './lib/is';
 import { Settings, Window } from './api';
+import { ExtensionId } from './constants';
 import { getLabel } from './lib/getLabel';
 import { byCategory, byHierarchy } from './lib/sort';
-import { Toggle, ToggleWorkspace } from './constants';
 import { Command, Configuration, QuickPickItem } from './types';
 
 const buildCommand = (mode: 'global' | 'workspace') => {
@@ -97,12 +97,12 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 };
 
 export const toggle: Command = {
-	name: Toggle,
+	name: `${ExtensionId}.toggle`,
 	callback: buildCommand('global'),
 };
 
 export const toggleWorkspace: Command = {
-	name: ToggleWorkspace,
+	name: `${ExtensionId}.toggle-workspace`,
 	callback: buildCommand('workspace'),
 };
 
