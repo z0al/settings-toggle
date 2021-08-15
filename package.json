@@ -3,7 +3,7 @@
 	"displayName": "Settings Toggle",
 	"description": "Effortlessly Toggle Settings in Visual Studio Code",
 	"publisher": "z0al",
-	"version": "0.1.0",
+	"version": "0.0.0",
 	"engines": {
 		"vscode": "^1.59.0"
 	},
@@ -50,19 +50,17 @@
 	},
 	"dependencies": {
 		"capital-case": "^1.0.4",
-		"micromatch": "^4.0.4",
+		"lodash.sortby": "^4.7.0",
 		"p-wait-for": "^3.2.0"
 	},
 	"devDependencies": {
-		"@types/glob": "^7.1.4",
 		"@types/jest": "^27.0.1",
-		"@types/micromatch": "^4.0.2",
+		"@types/lodash.sortby": "^4.7.6",
 		"@types/node": "^16.6.1",
 		"@types/vscode": "^1.59.0",
 		"@typescript-eslint/eslint-plugin": "^4.29.1",
 		"@typescript-eslint/parser": "^4.29.1",
 		"eslint": "^7.32.0",
-		"glob": "^7.1.7",
 		"jest": "^27.0.6",
 		"prettier": "^2.3.2",
 		"rimraf": "^3.0.2",
