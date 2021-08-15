@@ -12,7 +12,5 @@ jobs:
       - uses: actions/checkout@v2
       - run: npm install
       - run: npm run lint
-      - run: xvfb-run -a npm test
-        if: runner.os == 'Linux'
+      - run: npm run compile
       - run: npm test
-        if: runner.os != 'Linux'

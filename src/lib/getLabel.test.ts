@@ -1,6 +1,3 @@
-// Packages
-import { expect } from 'chai';
-
 // Ours
 import { getLabel } from './getLabel';
 
@@ -44,7 +41,7 @@ describe('getLabel', () => {
 
 	examples.forEach((ex) => {
 		it(`Turns "${ex.key}" into "${ex.title}"`, () => {
-			expect(getLabel(ex.key)).to.equal(ex.title);
+			expect(getLabel(ex.key)).toEqual(ex.title);
 		});
 	});
 });

@@ -64,7 +64,7 @@ const Terms = new Map([
  * VS Code's Settings UI view.
  */
 export function getLabel(key: string) {
-	const pathSeparator = ' › ';
+	const pathSeparator = ' > ';
 	const itemSeparator = ': ';
 
 	const segments = key.split('.').map((k) => {
