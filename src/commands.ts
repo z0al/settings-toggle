@@ -1,91 +1,98 @@
 // Ours
 import { isDefined } from './lib/is';
-import { byCategory } from './lib/sort';
 import { Settings, Window } from './api';
 import { getLabel } from './lib/getLabel';
+import { byCategory, byHierarchy } from './lib/sort';
 import { Toggle, ToggleWorkspace } from './constants';
 import { Command, Configuration, QuickPickItem } from './types';
 
 const buildCommand = (mode: 'global' | 'workspace') => {
 	const isWorkspace = mode === 'workspace';
-	const options = { workspace: isWorkspace };
-
 	const title = 'Settings' + (isWorkspace ? ' (Workspace)' : '');
 
 	const createConfigurationItem = (config: Configuration) => {
-		const isModifiedInWorkspace =
-			!isWorkspace && isDefined(config.workspaceValue);
+		const hasValue = isDefined(
+			isWorkspace ? config.workspaceValue : config.globalValue
+		);
+		const isModified = isDefined(
+			isWorkspace ? config.globalValue : config.workspaceValue
+		);
+		const modifier = isWorkspace ? 'User' : 'Workspace';
 
 		return {
 			...config,
 			label: getLabel(config.key),
 			detail: JSON.stringify(config.currentValue),
-
-			// In global settings mode we want to indicate if a
-			// value is overwritten in workspace level
-			description: isModifiedInWorkspace
-				? isDefined(config.globalValue)
-					? '(Also modified in: Workspace)'
-					: '(Modified in: Workspace)'
+			description: isModified
+				? hasValue
+					? `(Also modified in: ${modifier})`
+					: `(Modified in: ${modifier})`
 				: '',
 		};
 	};
 
 	return async () => {
-		const settings = new Settings(options);
+		const settings = new Settings(isWorkspace);
 
 		// @ts-expect-error
-		const config: Configuration &
-			QuickPickItem = await Window.showQuickPick(
-			title,
-			'Select to toggle or open a configuration',
-			settings
-				.getItems(createConfigurationItem)
-				.sort((a, b) => byCategory(a.key, b.key))
-		);
+		const config: Configuration & QuickPickItem =
+			await Window.showQuickPick(
+				title,
+				'Search settings',
+				settings
+					.getItems(createConfigurationItem)
+					.sort(byHierarchy)
+					.sort(byCategory)
+			);
 
 		if (!config) {
 			return;
 		}
 
+		// Booleans
 		if (config.type === 'boolean') {
-			return await settings.set(config.key, !config.currentValue);
+			return settings.set(config.key, !config.currentValue);
 		}
 
-		if (config.type === 'string' && config.enum) {
-			const isDefaultValue = (value: unknown) =>
-				config.defaultValue === value;
+		// Non-Enums
+		if (config.type !== 'string' || !config.enum) {
+			// Open User/Workspace settings and highlight or jump to the
+			// target config.key
+			return settings.open(config.key);
+		}
 
-			const isCurrentValue = (value: unknown) =>
-				config.currentValue === value;
+		// Enums
 
-			const isWorkspaceValue = (value: unknown) =>
-				config.workspaceValue === value;
+		const isDefaultValue = (value: unknown) =>
+			config.defaultValue === value;
 
-			const targetValue: any = await Window.showQuickPick(
-				title,
-				config.label,
-				config.enum.map((label) => ({
-					label,
-					description: isDefaultValue(label)
-						? '(Default)'
-						: isCurrentValue(label)
-						? '(Current)'
-						: !isWorkspace && isWorkspaceValue(label)
-						? '(Workspace)'
-						: '',
-				}))
-			);
+		const isCurrentValue = (value: unknown) =>
+			config.currentValue === value;
 
-			if (targetValue) {
-				await settings.set(config.key, targetValue.label);
-			}
+		const isWorkspaceValue = (value: unknown) =>
+			config.workspaceValue === value;
 
+		const targetValue: any = await Window.showQuickPick(
+			title,
+			config.label,
+			config.enum.map((label) => ({
+				label,
+				value: label,
+				description: isDefaultValue(label)
+					? '(Default)'
+					: isCurrentValue(label)
+					? '(Current)'
+					: !isWorkspace && isWorkspaceValue(label)
+					? '(Workspace)'
+					: '',
+			}))
+		);
+
+		if (!targetValue) {
 			return;
 		}
 
-		// TODO: .open() should accept a config to jump to
-		return await settings.open();
+		return settings.set(config.key, targetValue.value);
 	};
 };
 

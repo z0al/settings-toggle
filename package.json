@@ -49,8 +49,8 @@
 	},
 	"dependencies": {
 		"capital-case": "^1.0.4",
-		"jsonc-parser": "^3.0.0",
-		"micromatch": "^4.0.4"
+		"micromatch": "^4.0.4",
+		"p-wait-for": "^3.2.0"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.21",
@@ -61,14 +61,14 @@
 		"@types/vscode": "^1.59.0",
 		"@typescript-eslint/eslint-plugin": "^4.29.1",
 		"@typescript-eslint/parser": "^4.29.1",
+		"@vscode/test-electron": "^1.6.2",
 		"chai": "^4.3.4",
 		"eslint": "^7.32.0",
 		"glob": "^7.1.7",
 		"mocha": "^9.0.3",
 		"prettier": "^2.3.2",
 		"rimraf": "^3.0.2",
-		"typescript": "^4.3.5",
-		"vscode-test": "^1.6.1"
+		"typescript": "^4.3.5"
 	},
 	"prettier": {
 		"useTabs": true,
