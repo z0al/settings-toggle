@@ -1,59 +1,84 @@
 // Packages
 import { isMatch } from 'micromatch';
 
+// Ours
+import { Configuration } from '../types';
+
+const common = [
+	'files.autoSave',
+	'editor.fontSize',
+	'editor.fontFamily',
+	'editor.tabSize',
+	'editor.renderWhitespace',
+	'editor.cursorStyle',
+	'editor.multiCursorModifier',
+	'editor.insertSpaces',
+	'editor.wordWrap',
+	'files.exclude',
+	'files.associations',
+	'workbench.editor.enablePreview',
+];
+
 function getCategoryIndex(key: string) {
+	// Common
+	if (common.includes(key)) {
+		return common.indexOf(key);
+	}
+
+	const startIndex = common.length;
+
 	// Editor
 	if (key.startsWith('editor.') || key.startsWith('diffEditor.')) {
 		// Editor > Cursor
 		// ['editor.cursor*']
 		if (key.startsWith('editor.cursor')) {
-			return 1;
+			return startIndex + 1;
 		}
 
 		// Editor > Find
 		// ['editor.find.*']
 		if (key.startsWith('editor.find.')) {
-			return 2;
+			return startIndex + 2;
 		}
 
 		// Editor > Font
 		// ['editor.font*']
 		if (key.startsWith('editor.font')) {
-			return 3;
+			return startIndex + 3;
 		}
 
 		// Editor > Format
 		// ['editor.format*']
 		if (key.startsWith('editor.format')) {
-			return 4;
+			return startIndex + 4;
 		}
 
 		// Editor > Diff Editor
 		// ['diffEditor.*']
 		if (key.startsWith('diffEditor.')) {
-			return 5;
+			return startIndex + 5;
 		}
 
 		// Editor > Minimap
 		// ['editor.minimap.*']
 		if (key.startsWith('editor.minimap.')) {
-			return 6;
+			return startIndex + 6;
 		}
 
 		// Editor > Suggestions
 		// ['editor.*suggest*']
 		if (isMatch(key, 'editor.*suggest*')) {
-			return 7;
+			return startIndex + 7;
 		}
 
 		// Editor > Files
 		// ['files.*']
 		if (key.startsWith('files.')) {
-			return 8;
+			return startIndex + 8;
 		}
 
 		// Other e.g. editor.accessibilitySupport
-		return 9;
+		return startIndex + 9;
 	}
 
 	// Workbench
@@ -76,48 +101,48 @@ function getCategoryIndex(key: string) {
 				'workbench.view.*',
 			])
 		) {
-			return 10;
+			return startIndex + 10;
 		}
 
 		// Workbench > Breadcrumbs
 		// ['breadcrumbs.*']
 		if (key.startsWith('breadcrumbs.')) {
-			return 11;
+			return startIndex + 11;
 		}
 
 		// Workbench > Editor Management
 		// ['workbench.editor.*']
 		if (key.startsWith('workbench.editor.')) {
-			return 12;
+			return startIndex + 12;
 		}
 
 		// Workbench > Settings Editor
 		// ['workbench.settings.*']
 		if (key.startsWith('workbench.settings.')) {
-			return 13;
+			return startIndex + 13;
 		}
 
 		// Workbench > Zen Mode
 		// ['zenmode.*']
 		if (key.startsWith('zenmode.')) {
-			return 14;
+			return startIndex + 14;
 		}
 
 		// Workbench > Screencast Mode
 		// ['screencastMode.*']
 		if (key.startsWith('screencastMode.')) {
-			return 15;
+			return startIndex + 15;
 		}
 
 		// Other e.g. workbench.startupEditor
-		return 16;
+		return startIndex + 16;
 	}
 
 	// Window
 
 	// ['window.*newwindow*']
 	if (isMatch(key, 'window.*newwindow*')) {
-		return 17;
+		return startIndex + 17;
 	}
 
 	// Features
@@ -125,85 +150,85 @@ function getCategoryIndex(key: string) {
 	// Features > Explorer
 	// ['explorer.*', 'outline.*']
 	if (isMatch(key, ['explorer.*', 'outline.*'])) {
-		return 18;
+		return startIndex + 18;
 	}
 
 	// Features > Search
 	// ['search.*']
 	if (key.startsWith('search.')) {
-		return 19;
+		return startIndex + 19;
 	}
 
 	// Features > Debug
 	// ['debug.*', 'launch']
 	if (isMatch(key, ['debug.*', 'launch'])) {
-		return 20;
+		return startIndex + 20;
 	}
 
 	// Features > Testing
 	// ['testing.*']
 	if (key.startsWith('testing.')) {
-		return 21;
+		return startIndex + 21;
 	}
 
 	// Features > SCM
 	// ['scm.*']
 	if (key.startsWith('scm.')) {
-		return 22;
+		return startIndex + 22;
 	}
 
 	// Features > Extensions
 	// ['extensions.*']
 	if (key.startsWith('extensions.')) {
-		return 23;
+		return startIndex + 23;
 	}
 
 	// Features > Terminal
 	// ['terminal.*']
 	if (key.startsWith('terminal.')) {
-		return 24;
+		return startIndex + 24;
 	}
 
 	// Features > Task
 	// ['task.*']
 	if (key.startsWith('task.')) {
-		return 25;
+		return startIndex + 25;
 	}
 
 	// Features > Problems
 	// ['problems.*']
 	if (key.startsWith('problems.')) {
-		return 26;
+		return startIndex + 26;
 	}
 
 	// Features > Output
 	// ['output.*']
 	if (key.startsWith('output.')) {
-		return 27;
+		return startIndex + 27;
 	}
 
 	// Features > Comments
 	// ['comments.*']
 	if (key.startsWith('comments.')) {
-		return 28;
+		return startIndex + 28;
 	}
 
 	// Features > Remote
 	// ['remote.*']
 	if (key.startsWith('remote.')) {
-		return 29;
+		return startIndex + 29;
 	}
 
 	// Features > Timeline
 	// ['timeline.*']
 	if (key.startsWith('timeline.')) {
-		return 30;
+		return startIndex + 30;
 	}
 
 	// Features > Notebook
 	// ['notebook.*']
 	if (key.startsWith('notebook.')) {
-		return 31;
+		return startIndex + 31;
 	}
 
 	// Application
@@ -211,31 +236,31 @@ function getCategoryIndex(key: string) {
 	// Application > Proxy
 	// ['http.*']
 	if (key.startsWith('http.')) {
-		return 32;
+		return startIndex + 32;
 	}
 
 	// Application > Keyboard
 	// ['keyboard.*']
 	if (key.startsWith('keyboard.')) {
-		return 33;
+		return startIndex + 33;
 	}
 
 	// Application > Update
 	// ['update.*']
 	if (key.startsWith('update.')) {
-		return 34;
+		return startIndex + 34;
 	}
 
 	// Application > Telemetry
 	// ['telemetry.*']
 	if (key.startsWith('telemetry.')) {
-		return 35;
+		return startIndex + 35;
 	}
 
 	// Application > Settings Sync
 	// ['settingsSync.*']
 	if (key.startsWith('settingsSync.')) {
-		return 36;
+		return startIndex + 36;
 	}
 
 	// Security
@@ -243,13 +268,28 @@ function getCategoryIndex(key: string) {
 	// Security > Workspace
 	// ['security.workspace.*']
 	if (key.startsWith('security.workspace.')) {
-		return 37;
+		return startIndex + 37;
 	}
 
 	// Other e.g. Extension configs
-	return 100;
+	return startIndex + 100;
 }
 
-export function byCategory(a: string, b: string) {
-	return getCategoryIndex(a) - getCategoryIndex(b);
+export function byCategory(a: Configuration, b: Configuration) {
+	return getCategoryIndex(a.key) - getCategoryIndex(b.key);
+}
+
+export function byHierarchy(a: Configuration, b: Configuration) {
+	const isACommon = common.includes(a.key);
+	const isBCommon = common.includes(b.key);
+
+	if (isACommon) {
+		return -1;
+	}
+
+	if (isBCommon) {
+		return 1;
+	}
+
+	return a.key.split('.').length - b.key.split('.').length;
 }

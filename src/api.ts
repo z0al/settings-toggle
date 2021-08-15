@@ -1,5 +1,6 @@
 // Packages
 import * as vscode from 'vscode';
+import waitFor from 'p-wait-for';
 
 // Ours
 import { Command, Configuration } from './types';
@@ -7,8 +8,8 @@ import { configurationsSchema } from './lib/schema';
 import { getCurrentValue } from './lib/getCurrentValue';
 
 export const Commands = {
-	execute: (cmd: string) => {
-		return vscode.commands.executeCommand(cmd);
+	execute: (cmd: string, ...args: any[]) => {
+		return vscode.commands.executeCommand(cmd, ...args);
 	},
 
 	register: (cmd: Command) => {
@@ -46,33 +47,6 @@ export const Window = {
 		}),
 };
 
-export class JsonEditor {
-	constructor(private editor: vscode.TextEditor) {}
-
-	private reveal = (range: vscode.Range) => {
-		this.editor.revealRange(range);
-		this.editor.selection = new vscode.Selection(range.end, range.end);
-	};
-
-	/**
-	 * Jump to line number
-	 *
-	 * Copied & modified from:
-	 * https://github.com/mathbookpeace/vscode-ext-just-go-to-line
-	 */
-	jumpTo = (line: number) => {
-		// TODO: handle column position
-		const targetLine = line - 1;
-		const lastLine = this.editor.document.lineCount - 1;
-
-		const { range } = this.editor.document.lineAt(
-			Math.max(0, Math.min(targetLine, lastLine))
-		);
-
-		this.reveal(range);
-	};
-}
-
 export class Settings {
 	/**
 	 * A DocumentFilter to match global and workspace settings
@@ -82,23 +56,27 @@ export class Settings {
 		pattern: '**/settings.json',
 	};
 
-	constructor(private opts: { workspace?: boolean } = {}) {}
+	constructor(private workspaceMode?: boolean) {}
+
+	getConfigTarget = () => {
+		return this.workspaceMode ? 'workspace' : 'global';
+	};
 
 	/**
 	 * Check if JSON settings file is opened in the currently active
 	 * editor
 	 */
 	private isActive = () => {
-		// FIXIME: compatibility with other editors?
-		const fileExt = this.opts.workspace
-			? '.vscode/settings.json'
-			: '/User/settings.json';
-
 		const doc = Window.activeEditor()?.document;
 
 		if (!doc) {
 			return false;
 		}
+
+		// TODO: compatibility with other editors?
+		const fileExt = this.workspaceMode
+			? 'vscode/settings.json'
+			: 'User/settings.json';
 
 		return (
 			doc.fileName.endsWith(fileExt) &&
@@ -106,21 +84,50 @@ export class Settings {
 		);
 	};
 
-	private waitUntilActive = () => {
+	private waitForEditor = () => {
 		if (this.isActive()) {
 			return true;
 		}
 
-		return new Promise<void>((resolve) => {
-			const { dispose } = Window.onActiveChanged(() => {
-				if (!this.isActive()) {
-					return;
-				}
+		return waitFor(() => this.isActive());
+	};
 
-				dispose();
-				resolve();
-			});
-		});
+	private jumpToKey = async (configKey: string) => {
+		if (!this.isActive()) {
+			return;
+		}
+
+		const editor = Window.activeEditor();
+
+		if (!editor) {
+			return;
+		}
+
+		let symbols: vscode.DocumentSymbol[] = [];
+
+		const getSymbol = () => {
+			return symbols.find((s) => s.name === configKey);
+		};
+
+		await waitFor(
+			async () => {
+				// @ts-expect-error
+				symbols = await Commands.execute(
+					'vscode.executeDocumentSymbolProvider',
+					editor.document.uri
+				);
+
+				return !!getSymbol();
+			},
+			{ timeout: 500 }
+		);
+
+		const range = getSymbol()?.range;
+
+		if (range) {
+			editor.revealRange(range);
+			editor.selection = new vscode.Selection(range.end, range.end);
+		}
 	};
 
 	/**
@@ -132,34 +139,51 @@ export class Settings {
 		return configs.update(
 			key,
 			value,
-			this.opts.workspace
+			this.workspaceMode
 				? vscode.ConfigurationTarget.Workspace
 				: vscode.ConfigurationTarget.Global
 		);
 	};
 
 	/**
-	 * Open global or workspace JSON settings and wait for the file
-	 * to be active
+	 * Open user preferred settings editor and jump to the
+	 * configuration item
 	 */
-	open = async (): Promise<boolean> => {
-		if (this.isActive()) {
-			return true;
+	open = async (configKey: string) => {
+		// Check the user preferred Settings Editor
+		const preferredEditor = getCurrentValue({
+			...vscode.workspace
+				.getConfiguration()
+				.inspect('workbench.settings.editor'),
+			target: this.getConfigTarget(),
+		});
+
+		// Settings (UI)
+		if (preferredEditor === 'ui') {
+			return Commands.execute(
+				'workbench.action.openSettings',
+				configKey
+			);
 		}
 
-		const cmd = this.opts.workspace
-			? 'workbench.action.openWorkspaceSettings'
+		// Settings (JSON)
+		const cmd = this.workspaceMode
+			? 'workbench.action.openWorkspaceSettingsFile'
 			: 'workbench.action.openSettingsJson';
 
-		try {
-			await Commands.execute(cmd);
-		} catch (e) {
-			return false;
-		}
+		await Commands.execute(cmd);
+		await this.waitForEditor();
 
-		await this.waitUntilActive();
+		// Force-set the value in order to appear in the editor
+		await this.set(
+			configKey,
+			getCurrentValue({
+				...vscode.workspace.getConfiguration().inspect(configKey),
+				target: this.getConfigTarget(),
+			})
+		);
 
-		return true;
+		return this.jumpToKey(configKey);
 	};
 
 	getItems = <T>(transform: (config: Configuration) => T): T[] => {
@@ -177,7 +201,7 @@ export class Settings {
 			};
 
 			const currentValue = getCurrentValue({
-				target: this.opts.workspace ? 'workspace' : 'global',
+				target: this.getConfigTarget(),
 				...values,
 			});
 
