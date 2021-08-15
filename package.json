@@ -3,7 +3,7 @@
 	"displayName": "Settings Toggle",
 	"description": "Effortlessly Toggle Settings in Visual Studio Code",
 	"publisher": "z0al",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.59.0"
 	},
@@ -14,11 +14,22 @@
 		"settings",
 		"toggle"
 	],
+	"galleryBanner": {
+		"color": "#fff"
+	},
+	"icon": "images/icon.png",
 	"activationEvents": [
 		"onCommand:settings-toggle.toggle",
 		"onCommand:settings-toggle.toggle-workspace"
 	],
 	"main": "./dist/main.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/z0al/settings-toggle.git"
+	},
+	"bugs": {
+		"url": "https://github.com/z0al/settings-toggle/issues"
+	},
 	"contributes": {
 		"keybindings": [
 			{
@@ -41,12 +52,12 @@
 		]
 	},
 	"scripts": {
-		"compile": "rimraf -rf ./dist && tsc -p ./",
-		"watch": "tsc -watch -p ./",
+		"build": "esbuild ./src/main.ts --bundle --outfile=dist/main.js --external:vscode --format=cjs --platform=node --minify",
+		"tsc": "rimraf -rf ./dist && tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"test": "jest",
 		"format": "prettier -w '**/*.{ts,json,md}'",
-		"vscode:prepublish": "npm run compile"
+		"vscode:prepublish": "npm run build"
 	},
 	"dependencies": {
 		"capital-case": "^1.0.4",
@@ -60,6 +71,7 @@
 		"@types/vscode": "^1.59.0",
 		"@typescript-eslint/eslint-plugin": "^4.29.1",
 		"@typescript-eslint/parser": "^4.29.1",
+		"esbuild": "^0.12.20",
 		"eslint": "^7.32.0",
 		"jest": "^27.0.6",
 		"prettier": "^2.3.2",
