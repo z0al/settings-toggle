@@ -8,7 +8,9 @@ Effortlessly Toggle Settings in Visual Studio Code
 - 👀 Preview configuration changes on focus
 - 🚩 Highlight modification in user/workspace configurations
 
-> 💡 Only `boolean` and `enum` configurations can be toggled. Otherwise, the extension will open the native Settings UI (or the JSON Editor if `Workbench > Settings: Editor` is set to `json`) and focus on the target item.
+## Note
+
+Only `boolean` and `enum` configurations can be toggled. Otherwise, the extension will open the native Settings UI (or the JSON Editor if `Workbench > Settings: Editor` is set to `json`) and focus on the target item.
 
 ## Commands
 
