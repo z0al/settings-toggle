@@ -2,7 +2,7 @@
 
 Effortlessly Toggle Settings in Visual Studio Code
 
-![demo](./images/demo.gif)
+![demo](images/demo.gif)
 
 ## Features
 
