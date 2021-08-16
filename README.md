@@ -2,7 +2,7 @@
 
 Effortlessly Toggle Settings in Visual Studio Code
 
-![demo](images/demo.gif)
+![demo](https://raw.githubusercontent.com/z0al/settings-toggle/main/images/demo.gif?token=ADAWERO5RQZ2CEI2L23AKULBDIJEW)
 
 ## Features
 
