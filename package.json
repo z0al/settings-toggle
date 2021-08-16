@@ -57,6 +57,7 @@
 		"lint": "eslint src --ext ts",
 		"test": "jest",
 		"watch": "tsc -watch -p ./",
+		"package": "vsce package",
 		"format": "prettier -w '**/*.{ts,json,md}'",
 		"vscode:prepublish": "npm run build"
 	},
@@ -78,7 +79,8 @@
 		"prettier": "^2.3.2",
 		"rimraf": "^3.0.2",
 		"ts-jest": "^27.0.4",
-		"typescript": "^4.3.5"
+		"typescript": "^4.3.5",
+		"vsce": "^1.96.1"
 	},
 	"prettier": {
 		"useTabs": true,
