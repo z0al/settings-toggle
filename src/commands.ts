@@ -1,9 +1,9 @@
 // Ours
 import { isDefined } from './lib/is';
 import { Settings, Window } from './api';
-import { ExtensionId } from './constants';
 import { getLabel } from './lib/getLabel';
 import { categorize } from './lib/categorize';
+import { ExtensionId, ExtensionName } from './constants';
 import { Command, Configuration, QuickPickItem } from './types';
 
 const stripDoubleQuotes = (str?: string) => {
@@ -12,7 +12,7 @@ const stripDoubleQuotes = (str?: string) => {
 
 const buildCommand = (mode: 'global' | 'workspace') => {
 	const isWorkspace = mode === 'workspace';
-	const title = 'Toggle' + (isWorkspace ? ' (Workspace)' : '');
+	const title = ExtensionName + (isWorkspace ? ' (Workspace)' : '');
 
 	const createConfigurationItem = (config: Configuration) => {
 		const hasValue = isDefined(
