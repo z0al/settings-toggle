@@ -2,6 +2,8 @@
 
 Effortlessly Toggle Settings in Visual Studio Code
 
+![demo](./images/demo.gif)
+
 ## Features
 
 - 🔍 Quickly Toggle or open any configuration
