@@ -10,7 +10,7 @@ export interface Command {
 }
 
 export interface ConfigurationSchema {
-	// There is more but we don't care
+	// There are more but we don't care
 	type: 'string' | 'boolean';
 	enum?: any[];
 	enumDescriptions?: string[];
