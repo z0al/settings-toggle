@@ -57,8 +57,8 @@
 		"lint": "eslint src --ext ts",
 		"test": "jest",
 		"watch": "tsc -watch -p ./",
-		"package": "vsce package",
 		"format": "prettier -w '**/*.{ts,json,md}'",
+		"release": "npm run build && semantic-release",
 		"vscode:prepublish": "npm run build"
 	},
 	"dependencies": {
@@ -78,9 +78,31 @@
 		"jest": "^27.0.6",
 		"prettier": "^2.3.2",
 		"rimraf": "^3.0.2",
+		"semantic-release": "^17.4.4",
+		"semantic-release-vsce": "^3.4.1",
 		"ts-jest": "^27.0.4",
 		"typescript": "^4.3.5",
 		"vsce": "^1.96.1"
+	},
+	"release": {
+		"branches": [
+			"main"
+		],
+		"verifyConditions": [
+			"semantic-release-vsce",
+			"@semantic-release/github"
+		],
+		"prepare": {
+			"path": "semantic-release-vsce",
+			"packageVsix": true
+		},
+		"publish": [
+			"semantic-release-vsce",
+			{
+				"path": "@semantic-release/github",
+				"assets": "*.vsix"
+			}
+		]
 	},
 	"prettier": {
 		"useTabs": true,

@@ -1,4 +1,4 @@
-name: Test
+name: Test & Release
 
 on: [push, pull_request]
 
@@ -12,3 +12,14 @@ jobs:
       - run: npm run tsc
       - run: npm run build
       - run: npm test
+  release:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm i
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: npm run release
