@@ -67,6 +67,7 @@
 		"p-wait-for": "^3.2.0"
 	},
 	"devDependencies": {
+		"@semantic-release/changelog": "^5.0.1",
 		"@types/jest": "^27.0.1",
 		"@types/lodash.sortby": "^4.7.6",
 		"@types/node": "^16.6.1",
@@ -102,6 +103,19 @@
 				"path": "@semantic-release/github",
 				"assets": "*.vsix"
 			}
+		],
+		"plugins": [
+			"@semantic-release/commit-analyzer",
+			"@semantic-release/release-notes-generator",
+			"@semantic-release/changelog",
+			[
+				"@semantic-release/git",
+				{
+					"assets": [
+						"CHANGELOG.md"
+					]
+				}
+			]
 		]
 	},
 	"prettier": {
