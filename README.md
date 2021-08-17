@@ -6,7 +6,7 @@ Effortlessly Toggle Settings in Visual Studio Code
 
 ## Features
 
-- 🔍 Quickly Toggle or open any configuration
+- 🔍 Quickly toggle or open any configuration
 - 👀 Preview configuration changes on focus
 - 💡 Indicate modification in user/workspace configurations
 

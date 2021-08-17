@@ -1,10 +1,10 @@
 // Ours
 import { isDefined } from './lib/is';
-import { Settings, Window } from './api';
 import { getLabel } from './lib/getLabel';
 import { categorize } from './lib/categorize';
+import { Settings, showQuickPick } from './api';
+import { Command, Configuration } from './types';
 import { ExtensionId, ExtensionName } from './constants';
-import { Command, Configuration, QuickPickItem } from './types';
 
 const stripDoubleQuotes = (str?: string) => {
 	return str?.replace(/^"|"$/g, '');
@@ -38,13 +38,11 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 	return async () => {
 		const settings = new Settings(isWorkspace);
 
-		// @ts-expect-error
-		const config: Configuration & QuickPickItem =
-			await Window.showQuickPick(
-				title,
-				'Search settings',
-				categorize(settings.getItems(createConfigurationItem))
-			);
+		const config = await showQuickPick(
+			title,
+			'Search settings',
+			categorize(settings.getItems(createConfigurationItem))
+		);
 
 		if (!config) {
 			return;
@@ -72,7 +70,12 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 		const isWorkspaceValue = (value: unknown) =>
 			config.workspaceValue === value;
 
-		const targetValue = await Window.showQuickPick(
+		// The value to revert to on cancel
+		const resetValue = isWorkspace
+			? config.workspaceValue
+			: config.globalValue;
+
+		const targetValue = await showQuickPick(
 			title,
 			config.label,
 			config.enum.map((label) => ({
@@ -94,11 +97,8 @@ const buildCommand = (mode: 'global' | 'workspace') => {
 			}
 		);
 
-		// Revert setting to the original or set a value
-		return settings.set(
-			config.key,
-			targetValue?.value || config.currentValue
-		);
+		// Revert setting to the original or set a new value
+		return settings.set(config.key, targetValue?.value || resetValue);
 	};
 };
 

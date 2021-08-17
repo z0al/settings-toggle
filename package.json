@@ -3,7 +3,7 @@
 	"displayName": "Settings Toggle",
 	"description": "Effortlessly Toggle Settings in Visual Studio Code",
 	"publisher": "z0al",
-	"version": "0.1.0",
+	"version": "0.0.0-semantically-released",
 	"engines": {
 		"vscode": "^1.59.0"
 	},
