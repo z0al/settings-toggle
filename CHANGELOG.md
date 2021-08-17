@@ -1,9 +1,3 @@
 # Change Log
 
-All notable changes to the "settings-toggle" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+See the [Release Notes on GitHub](https://github.com/z0al/settings-toggle/releases)
