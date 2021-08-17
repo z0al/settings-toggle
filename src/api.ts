@@ -17,70 +17,48 @@ export const Commands = {
 	},
 };
 
-export const Window = {
-	/**
-	 * Get currently active editor
-	 */
-	activeEditor: () => vscode.window.activeTextEditor,
+/**
+ * Show a selection list
+ */
+export const showQuickPick = async <
+	T extends vscode.QuickPickItem & { isActive?: boolean }
+>(
+	title: string,
+	placeHolder: string,
+	items: T[],
+	onFocus?: (item: T) => void
+) => {
+	const qp = vscode.window.createQuickPick<T>();
 
-	/**
-	 * An event which fires when the active editor has changed.
-	 * Note that the event also fires when the active editor changes
-	 * to undefined.
-	 */
-	onActiveChanged: vscode.window.onDidChangeActiveTextEditor,
+	qp.items = items;
+	qp.title = title;
+	qp.placeholder = placeHolder;
+	qp.matchOnDetail = true;
+	qp.matchOnDescription = false;
+	qp.activeItems = items.filter((item) => item.isActive);
 
-	/**
-	 * Show a selection list
-	 */
-	showQuickPick: async <
-		T extends vscode.QuickPickItem & { isActive?: boolean }
-	>(
-		title: string,
-		placeHolder: string,
-		items: T[],
-		onFocus?: (item: T) => void
-	) => {
-		const qp = vscode.window.createQuickPick<T>();
+	qp.onDidChangeActive((items) => {
+		// We don't support canPickMany
+		const item = items[0];
+		onFocus?.(item);
+	});
 
-		qp.items = items;
-		qp.title = title;
-		qp.placeholder = placeHolder;
-		qp.matchOnDetail = true;
-		qp.matchOnDescription = false;
-		qp.activeItems = items.filter((item) => item.isActive);
+	return new Promise<T | undefined>((resolve) => {
+		qp.onDidAccept(() => {
+			qp.hide();
 
-		qp.onDidChangeActive((items) => {
 			// We don't support canPickMany
-			const item = items[0];
-			onFocus?.(item);
+			const item = qp.selectedItems[0];
+			resolve(item);
 		});
 
-		return new Promise<T | undefined>((resolve) => {
-			qp.onDidAccept(() => {
-				qp.hide();
+		qp.onDidHide(() => resolve(undefined));
 
-				// We don't support canPickMany
-				const item = qp.selectedItems[0];
-				resolve(item);
-			});
-
-			qp.onDidHide(() => resolve(undefined));
-
-			qp.show();
-		});
-	},
+		qp.show();
+	});
 };
 
 export class Settings {
-	/**
-	 * A DocumentFilter to match global and workspace settings
-	 */
-	static fileInfo = {
-		language: 'jsonc',
-		pattern: '**/settings.json',
-	};
-
 	constructor(private workspaceMode?: boolean) {}
 
 	getConfigTarget = () => {
@@ -92,7 +70,7 @@ export class Settings {
 	 * editor
 	 */
 	private isActive = () => {
-		const doc = Window.activeEditor()?.document;
+		const doc = vscode.window.activeTextEditor?.document;
 
 		if (!doc) {
 			return false;
@@ -103,10 +81,7 @@ export class Settings {
 			? 'vscode/settings.json'
 			: 'User/settings.json';
 
-		return (
-			doc.fileName.endsWith(fileExt) &&
-			doc.languageId === Settings.fileInfo.language
-		);
+		return doc.fileName.endsWith(fileExt) && doc.languageId === 'jsonc';
 	};
 
 	private waitForEditor = () => {
@@ -122,7 +97,7 @@ export class Settings {
 			return;
 		}
 
-		const editor = Window.activeEditor();
+		const editor = vscode.window.activeTextEditor;
 
 		if (!editor) {
 			return;
@@ -136,11 +111,10 @@ export class Settings {
 
 		await waitFor(
 			async () => {
-				// @ts-expect-error
-				symbols = await Commands.execute(
+				symbols = (await Commands.execute(
 					'vscode.executeDocumentSymbolProvider',
 					editor.document.uri
-				);
+				)) as vscode.DocumentSymbol[];
 
 				return !!getSymbol();
 			},

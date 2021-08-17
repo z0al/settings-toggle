@@ -1,10 +1,9 @@
 // Packages
-import { workspace } from 'vscode';
+import { workspace, ExtensionContext } from 'vscode';
 
 // Ours
 import { Commands } from './api';
 import { commands } from './commands';
-import { ExtensionContext } from './types';
 import { SettingsSchemaUri } from './constants';
 import { buildInternalSchema } from './lib/schema';
 
