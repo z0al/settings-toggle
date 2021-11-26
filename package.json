@@ -76,7 +76,7 @@
 		"esbuild": "^0.13.15",
 		"eslint": "^7.32.0",
 		"jest": "^27.3.1",
-		"prettier": "^2.4.1",
+		"prettier": "^2.5.0",
 		"rimraf": "^3.0.2",
 		"semantic-release": "^18.0.1",
 		"semantic-release-vsce": "^3.5.0",
