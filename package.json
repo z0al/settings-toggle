@@ -73,7 +73,7 @@
 		"@types/vscode": "^1.66.0",
 		"@typescript-eslint/eslint-plugin": "^4.33.0",
 		"@typescript-eslint/parser": "^4.33.0",
-		"esbuild": "^0.14.36",
+		"esbuild": "^0.14.37",
 		"eslint": "^7.32.0",
 		"jest": "^27.5.1",
 		"prettier": "^2.6.2",
