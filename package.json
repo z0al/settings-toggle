@@ -64,7 +64,7 @@
 	"dependencies": {
 		"capital-case": "^1.0.4",
 		"lodash.sortby": "^4.7.0",
-		"p-wait-for": "^3.2.0"
+		"p-wait-for": "^5.0.0"
 	},
 	"devDependencies": {
 		"@types/jest": "^27.5.0",
